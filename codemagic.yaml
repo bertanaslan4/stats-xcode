@@ -1,0 +1,20 @@
+workflows:
+  ios-app-store:
+    name: StatsAnaliz App Store Build
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: "Apple Key"
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.statsanaliz.app
+      xcode: latest
+    scripts:
+      - name: iOS Uygulamasını Derle (Archive)
+        script: xcode-project build-ipa --project "statsAnaliz.xcodeproj" --scheme "statsAnaliz"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
