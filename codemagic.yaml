@@ -13,8 +13,30 @@ workflows:
           keychain add-certificates --certificate "ios_distribution.p12" --certificate-password "123456"
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp "StatsAnaliz.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
-      - name: iOS Uygulamasını Derle (Archive)
-        script: xcode-project build-ipa --project "statsAnaliz.xcodeproj" --scheme "statsAnaliz"
+      - name: Export Ayarlarini Olustur
+        script: |
+          PROFILE_NAME=$(grep -aA1 '<key>Name</key>' "StatsAnaliz.mobileprovision" | grep '<string>' | sed -e 's/.*<string>\(.*\)<\/string>.*/\1/')
+          cat <<EOF > export_options.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>app-store</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>teamID</key>
+              <string>Z9ZR6Z7D8W</string>
+              <key>provisioningProfiles</key>
+              <dict>
+                  <key>com.statsanaliz.app</key>
+                  <string>$PROFILE_NAME</string>
+              </dict>
+          </dict>
+          </plist>
+          EOF
+      - name: iOS Uygulamasini Derle (Archive)
+        script: xcode-project build-ipa --project "statsAnaliz.xcodeproj" --scheme "statsAnaliz" --export-options-plist export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
