@@ -10,7 +10,7 @@ workflows:
       - name: Sertifika ve Profili Mac'e Kur
         script: |
           keychain initialize
-          keychain add-certificates --certificate "ios_distribution.p12" --certificate-password "123456"
+          keychain add-certificates --certificate "ios_distribution.p12" --certificate-password "4795"
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp "StatsAnaliz.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
       - name: iOS Uygulamasini Derle ve Paketle
